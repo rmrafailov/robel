@@ -74,6 +74,16 @@ register(
     max_episode_steps=_SCREW_EPISODE_LEN)
 
 register(
+    env_id='DClawScrewVel-v0',
+    class_path='robel.dclaw.screw:DClawScrewVelv0',
+    max_episode_steps=_SCREW_EPISODE_LEN)
+
+register(
+    env_id='DClawScrewVel-v1',
+    class_path='robel.dclaw.screw:DClawScrewVelv1',
+    max_episode_steps=_SCREW_EPISODE_LEN)
+
+register(
     env_id='DClawScrewRandom-v0',
     class_path='robel.dclaw.screw:DClawScrewRandom',
     max_episode_steps=_SCREW_EPISODE_LEN)

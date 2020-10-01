@@ -65,9 +65,63 @@ class DClawScrewFixed(BaseDClawScrew):
         # Start from the target and rotate at a constant velocity.
         self._initial_object_pos = 0
         self._set_target_object_pos(0)
-        self._target_object_vel = 0.5
+        self._target_object_vel = 0.0#0.5
         super()._reset()
 
+
+@configurable(pickleable=True)
+class DClawScrewVelv0(DClawScrewFixed):
+    """Rotates the object with a fixed initial position and velocity."""
+    
+    def __init__(self, direction = 1.0):
+        self.direction = direction
+        super().__init__()
+        
+    def step(self, action):
+        obs, rew, done, info =  super().step(action)
+        rew = 0
+        rew += info['reward/pose_diff_cost']
+        rew += info['reward/joint_vel_cost']
+        rew += 5 * self.direction * info['obs/object_qvel']
+        rew = rew[0]
+        info['obs/proprio'] = np.concatenate([info['obs/claw_qpos'], 
+                                             info['obs/claw_qvel']])
+        info['task/direction'] = self.direction
+        
+        return obs, rew, done, info
+    
+    def get_obs_dict(self):
+        obs_dict = super().get_obs_dict()
+        obs_dict['proprio'] = np.concatenate([obs_dict['claw_qpos'], obs_dict['claw_qvel']])
+        return obs_dict
+    
+
+@configurable(pickleable=True)
+class DClawScrewVelv1(DClawScrewFixed):
+    """Rotates the object with a fixed initial position and velocity."""
+    
+    def __init__(self, direction = -1.0):
+        self.direction = direction
+        super().__init__()
+        
+    def step(self, action):
+        obs, rew, done, info =  super().step(action)
+        rew = 0
+        rew += info['reward/pose_diff_cost']
+        rew += info['reward/joint_vel_cost']
+        rew += 5 * self.direction * info['obs/object_qvel']
+        rew = rew[0]
+        info['obs/proprio'] = np.concatenate([info['obs/claw_qpos'], 
+                                             info['obs/claw_qvel']])
+        info['task/direction'] = self.direction
+        
+        return obs, rew, done, info
+    
+    def get_obs_dict(self):
+        obs_dict = super().get_obs_dict()
+        obs_dict['proprio'] = np.concatenate([obs_dict['claw_qpos'], obs_dict['claw_qvel']])
+        return obs_dict
+    
 
 @configurable(pickleable=True)
 class DClawScrewRandom(BaseDClawScrew):
