@@ -68,6 +68,11 @@ register(
 _WALK_EPISODE_LEN = 160  # 160*40*2.5ms = 16s
 
 register(
+    env_id='DKittyWalk-v0',
+    class_path='robel.dkitty.walk:DKittyWalk',
+    max_episode_steps=_WALK_EPISODE_LEN)
+
+register(
     env_id='DKittyWalkFixed-v0',
     class_path='robel.dkitty.walk:DKittyWalkFixed',
     max_episode_steps=_WALK_EPISODE_LEN)

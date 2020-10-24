@@ -94,6 +94,8 @@ class BaseDKittyWalk(BaseDKittyUprightEnv, metaclass=abc.ABCMeta):
 
         self._initial_target_pos = np.zeros(3)
         self._initial_heading_pos = None
+        #self._gym_disable_underscore_compat = False
+        #self._seed = 123
 
     def _configure_tracker(self, builder: TrackerComponentBuilder):
         """Configures the tracker component."""
@@ -171,6 +173,7 @@ class BaseDKittyWalk(BaseDKittyUprightEnv, metaclass=abc.ABCMeta):
             ('root_angular_vel', torso_track_state.angular_vel),
             ('kitty_qpos', robot_state.qpos),
             ('kitty_qvel', robot_state.qvel),
+            ('proprio', np.concatenate([robot_state.qpos, robot_state.qvel])),
             ('last_action', self._get_last_action()),
             ('heading', heading),
             ('target_pos', target_xy),
@@ -211,8 +214,28 @@ class BaseDKittyWalk(BaseDKittyUprightEnv, metaclass=abc.ABCMeta):
         ))
 
 
+
+
 @configurable(pickleable=True)
 class DKittyWalkFixed(BaseDKittyWalk):
+    """Walk straight towards a fixed location."""
+suc
+    def _reset(self):
+        """Resets the environment."""
+        target_dist = 2.5
+        target_theta = np.pi / 2  # Point towards y-axis
+        self._initial_target_pos = target_dist * np.array([
+            np.cos(target_theta), np.sin(target_theta), 0
+        ])
+        super()._reset()
+        
+        
+    def render(self, mode ='rgb_array', width=128, height=128, camera_id = 1):
+        img = super().render(mode=mode, width=width, height=height, camera_id = camera_id)
+        return img
+        
+@configurable(pickleable=True)
+class DKittyWalk(DKittyWalkFixed):
     """Walk straight towards a fixed location."""
 
     def _reset(self):
@@ -223,7 +246,25 @@ class DKittyWalkFixed(BaseDKittyWalk):
             np.cos(target_theta), np.sin(target_theta), 0
         ])
         super()._reset()
+        obs_dict = self.get_obs_dict()
+        self.pos = obs_dict['root_pos']
 
+        
+    def step(self, action):
+        obs_pre = self.get_obs_dict().copy()
+        obs, rew, done, info = super().step(action)
+        obs_post = self.get_obs_dict().copy()
+        
+        rew = info['reward/upright']
+        rew += np.sum(obs_post['root_pos'][:2] - obs_pre['root_pos'][:2])
+#        rew += 5.0 * (np.linalg.norm(info['obs/root_pos']) - np.linalg.norm(self.pos))
+#        rew += 2.5 * np.linalg.norm(info['obs/root_pos'])
+        self.pos = info['obs/root_pos']
+        return obs, rew, False, info
+    
+    def render(self, mode ='rgb_array', width=128, height=128, camera_id = 1):
+        img = super().render(mode=mode, width=width, height=height, camera_id = camera_id)
+        return img
 
 @configurable(pickleable=True)
 class DKittyWalkRandom(BaseDKittyWalk):
@@ -234,7 +275,9 @@ class DKittyWalkRandom(BaseDKittyWalk):
             *args,
             target_distance_range: Tuple[float, float] = (1.0, 2.0),
             # +/- 60deg
-            target_angle_range: Tuple[float, float] = (-np.pi / 3, np.pi / 3),
+#            target_angle_range: Tuple[float, float] = (-np.pi / 3, np.pi / 3),
+            target_angle_range: Tuple[float, float] = (-np.pi / 18, np.pi / 18),
+
             **kwargs):
         """Initializes the environment.
 
@@ -259,6 +302,9 @@ class DKittyWalkRandom(BaseDKittyWalk):
         ])
         super()._reset()
 
+    def render(self, mode ='rgb_array', width=128, height=128, camera_id = 1):
+        img = super().render(mode=mode, width=width, height=height, camera_id = camera_id)
+        return img
 
 @configurable(pickleable=True)
 class DKittyWalkRandomDynamics(DKittyWalkRandom):

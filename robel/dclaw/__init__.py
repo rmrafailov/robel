@@ -73,6 +73,8 @@ register(
     class_path='robel.dclaw.screw:DClawScrewFixed',
     max_episode_steps=_SCREW_EPISODE_LEN)
 
+
+
 register(
     env_id='DClawScrewVel-v0',
     class_path='robel.dclaw.screw:DClawScrewVelv0',
@@ -82,6 +84,29 @@ register(
     env_id='DClawScrewVel-v1',
     class_path='robel.dclaw.screw:DClawScrewVelv1',
     max_episode_steps=_SCREW_EPISODE_LEN)
+
+
+
+register(
+    env_id='DClawScrewVelp3-v0',
+    class_path='robel.dclaw.screw:DClawScrewVelp3v0',
+    max_episode_steps=_SCREW_EPISODE_LEN)
+
+register(
+    env_id='DClawScrewVelp3-v1',
+    class_path='robel.dclaw.screw:DClawScrewVelp3v1',
+    max_episode_steps=_SCREW_EPISODE_LEN)
+
+register(
+    env_id='DClawScrewVelp4-v0',
+    class_path='robel.dclaw.screw:DClawScrewVelp4v0',
+    max_episode_steps=_SCREW_EPISODE_LEN)
+
+register(
+    env_id='DClawScrewVelp4-v1',
+    class_path='robel.dclaw.screw:DClawScrewVelp4v1',
+    max_episode_steps=_SCREW_EPISODE_LEN)
+
 
 register(
     env_id='DClawScrewRandom-v0',

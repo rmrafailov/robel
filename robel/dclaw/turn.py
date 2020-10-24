@@ -43,6 +43,7 @@ DEFAULT_OBSERVATION_KEYS = (
 RESET_POSE = [0, -np.pi / 3, np.pi / 3] * 3
 
 DCLAW3_ASSET_PATH = 'robel/dclaw/assets/dclaw3xh_valve3_v0.xml'
+DCLAW4_ASSET_PATH = 'robel/dclaw/assets/dclaw3xh_valve4_v0.xml'
 
 
 class BaseDClawTurn(BaseDClawObjectEnv, metaclass=abc.ABCMeta):
@@ -68,6 +69,7 @@ class BaseDClawTurn(BaseDClawObjectEnv, metaclass=abc.ABCMeta):
                 object position and the goal position within which we consider
                 as a sucesss.
         """
+        print(asset_path)
         super().__init__(
             sim_model=get_asset_path(asset_path),
             observation_keys=observation_keys,

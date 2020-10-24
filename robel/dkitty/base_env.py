@@ -298,3 +298,4 @@ class BaseDKittyUprightEnv(BaseDKittyEnv):
     ) -> np.ndarray:
         """Returns whether the episode should terminate."""
         return obs_dict[self._upright_obs_key] < self._upright_threshold
+#        return 0.0 * (obs_dict[self._upright_obs_key] < self._upright_threshold)
